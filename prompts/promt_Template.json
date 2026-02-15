@@ -1,0 +1,15 @@
+{
+    "name": null,
+    "input_variables": [
+        "topic"
+    ],
+    "optional_variables": [],
+    "output_parser": null,
+    "partial_variables": {},
+    "metadata": null,
+    "tags": null,
+    "template": "\n    please explain the {topic} in such a way .\n    1. defination of the topic \n    2. why this is use \n    3. example\n    ",
+    "template_format": "f-string",
+    "validate_template": false,
+    "_type": "prompt"
+}
