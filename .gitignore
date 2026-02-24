@@ -31,3 +31,6 @@ build/
 *.bin
 *.ckpt
 *.pt
+
+#testing folder
+.testing/

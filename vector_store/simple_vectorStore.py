@@ -1,14 +1,15 @@
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI , GoogleGenerativeAIEmbeddings
 from dotenv import load_dotenv
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
+
 load_dotenv()
 
-# Initialize embedding model
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="models/gemini-embedding-001"
+model = ChatGoogleGenerativeAI(
+    model = "gemini-2.5-flash"
 )
 
+embedding_model = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
 doc1 = Document(
         page_content="Virat Kohli is one of the most successful and consistent batsmen in IPL history. Known for his aggressive batting style and fitness, he has led the Royal Challengers Bangalore in multiple seasons.",
         metadata={"team": "Royal Challengers Bangalore"}
@@ -30,20 +31,31 @@ doc5 = Document(
         metadata={"team": "Chennai Super Kings"}
     )
 
-docs = [doc1, doc2, doc3, doc4, doc5]
+docs = [doc1 , doc2, doc3, doc4 , doc5]
 
 vector_store = Chroma(
-    embedding_function=embeddings,
-    persist_directory="chroma_db",
-    collection_name="sample"
+    collection_name="simple",
+    embedding_function= embedding_model,
+    persist_directory="chroma.db"
 )
 
-# vector_store.add_documents(docs)
+ids = ["1" , '2' , '3' ,'4','5']
 
-# result =vector_store.get(include=['embeddings','documents', 'metadatas'])
-# print(result.keys())
-# print(result)
+vector_store.add_documents(docs ,ids = ids)
 
-result = vector_store.similarity_search(query="who is the caption of bangalore",k=2)
+ # result = vector_store.get(include=['embeddings','documents', 'metadatas'])
+ 
+updated_doc1 = Document(
+    page_content="Virat Kohli, the former captain of Royal Challengers Bangalore (RCB), is renowned for his aggressive leadership and consistent batting performances. He holds the record for the most runs in IPL history, including multiple centuries in a single season. Despite RCB not winning an IPL title under his captaincy, Kohli's passion and fitness set a benchmark for the league. His ability to chase targets and anchor innings has made him one of the most dependable players in T20 cricket.",
+    metadata={"team": "Royal Challengers Bangalore"}
+)
 
-print(result[0])
+vector_store.update_document(document_id='1',document=updated_doc1)
+
+query = "royal challenger banglore player name"
+
+Result = vector_store.similarity_search(query=query , k=2)
+
+for doc in Result :
+    print(doc.page_content)
+
